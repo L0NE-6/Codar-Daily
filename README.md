@@ -17,9 +17,35 @@
 <img src="https://img.shields.io/badge/Deploy-Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" />
 <img src="https://img.shields.io/badge/License-MIT-F472B6?style=for-the-badge" />
 
-[✨ 功能](#features) · [🔐 凭据](#credentials) · [🚀 部署](#quickstart) · [✅ 成功判据](#success) · [📊 输出](#output) · [🔒 隐私](#privacy) · [🧪 测试](#testing)
+[✨ 速览](#quick-overview) · [🔐 凭据](#credentials) · [🐧 青龙](#qinglong) · [☁️ Actions](#actions) · [✅ 成功判据](#success) · [📊 输出](#output) · [🧠 原则](#design) · [🚫 边界](#usage-policy) · [✦ 星轨](#star-trail)
 
 </div>
+
+---
+
+<a id="usage-policy"></a>
+## 🚫 使用边界与转载声明
+
+> [!IMPORTANT]
+> **官方版本永久免费。禁止倒卖。** 未经作者书面许可，禁止付费包装、搬运引流、冒充作者，或使用作者身份与收款码制造官方授权假象。
+
+本仓库、脚本、部署说明和 Release 下载始终免费公开。禁止把本项目包装为付费资源、内部版、独家版、会员权益、收费课程、代部署服务或包更新服务；禁止搬运到其他账号、群组、频道、网盘、电商和付费平台进行涨粉、截流、倒卖或引流；禁止删除作者与版权信息后冒充原创。
+
+完整规则见 **[NOTICE.md](NOTICE.md)**。
+
+---
+
+<a id="quick-overview"></a>
+## ✨ 30 秒速览
+
+| 维度 | 说明 |
+| :--- | :--- |
+| **做什么** | 检查 Codar 当前滚动 24 小时窗口是否已签到，未签时提交一次并回读。 |
+| **输入** | `CODAR_TOKENS` / `CODAR_COOKIES` 多账号，或单账号 `CODAR_TOKEN` / `CODAR_COOKIE`。 |
+| **输出** | 每账号一条 JSON、最后一条汇总 JSON、签到前后状态和领取回执。 |
+| **部署** | Windows、Linux、青龙面板、GitHub Actions。 |
+| **依赖** | Python 3.9+；运行时仅依赖 `requests`。 |
+| **成功判据** | 领取后服务端状态明确变为已签；单次 HTTP 200 或 claim 回执不算最终成功。 |
 
 ---
 
@@ -223,6 +249,19 @@ python3 codar_daily.py
 ---
 
 <a id="actions"></a>
+<a id="qinglong"></a>
+## 🐧 青龙面板部署
+
+1. 依赖管理安装 `requests`；
+2. 上传 `codar_daily.py`；
+3. 环境变量新增 `CODAR_TOKENS` / `CODAR_COOKIES`，单账号可用 `CODAR_TOKEN` / `CODAR_COOKIE`；
+4. 新建定时任务，命令填 `task codar_daily.py`；
+5. 建议每天固定运行一次，具体时间按账号使用习惯调整。
+
+> 青龙任务优先使用 `task codar_daily.py`，确保面板环境变量被注入。
+
+---
+
 ## ☁️ GitHub Actions
 
 内置工作流：[`.github/workflows/codar.yml`](.github/workflows/codar.yml)。
@@ -263,7 +302,7 @@ python3 codar_daily.py
 ---
 
 <a id="output"></a>
-## 📊 输出与结果码
+## ⌨️ 命令行与输出
 
 标准输出是 JSON Lines：每个账号一行，最后一行是汇总。
 
@@ -290,7 +329,9 @@ python3 codar_daily.py
 | `credit` | 回执中可解析的积分，仅作证据，不作为成功依据 |
 | `message` | 脱敏后的说明 |
 
-### 结果码
+---
+
+## 🧭 结果码
 
 | 结果码 | 成功 | 含义 |
 | :--- | :---: | :--- |
@@ -383,6 +424,19 @@ ruff check codar_daily.py tests
 
 ---
 
+<a id="design"></a>
+## 🧠 设计原则
+
+- **滚动窗口语义**：按服务端 24 小时签到状态判断，不把自然日写死在本地；
+- **状态机先行**：只有明确 `signed=false` 才提交领取；
+- **服务端回读**：领取后必须再次读取已签状态；
+- **账号隔离**：每个账号独立 Session 和错误边界；
+- **诚实失败**：未知状态、回执成功但未落账、登录失效分别报告；
+- **凭据脱敏**：Token、Cookie、JWT 和回包回显不进入日志；
+- **最小依赖**：运行时仅依赖 `requests`。
+
+---
+
 ## 📁 目录结构
 
 ```text
@@ -410,6 +464,17 @@ Codar-Daily/
 
 ---
 
+## 📦 版本与发布
+
+- 当前版本：`v1.0.0`（2026-11-24）；
+- 每次协议、状态字段或脚本行为变化单独发布版本；
+- Release 附带完整 ZIP、单文件脚本和 `SHA256SUMS.txt`；
+- 公开包不包含 Token、Cookie、JWT、报告或运行日志。
+
+下载页：<https://github.com/L0NE-6/Codar-Daily/releases>
+
+---
+
 ## ☕ 支持与投喂
 
 脚本完全免费，无广告、无功能限制。如果它确实帮你省了时间，欢迎自愿赞赏；不影响任何功能，也不影响 Issue 响应。
@@ -430,3 +495,31 @@ Codar-Daily/
 本项目用于个人学习和合法的个人自动化。科搭的活动规则、接口、账号资格和积分口径由服务方决定；使用前请确认对应服务条款，并自行承担账号、网络、活动和接口变化带来的风险。
 
 完整使用边界见 [NOTICE.md](NOTICE.md)。第三方许可与协议证据说明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
+---
+
+## 💬 反馈与贡献
+
+- [提交 Issue](https://github.com/L0NE-6/Codar-Daily/issues)
+- [发起 Pull Request](https://github.com/L0NE-6/Codar-Daily/pulls)
+
+反馈问题时，请附脱敏后的请求字段、签到前后状态、HTTP 状态和复现步骤。不要上传真实 JWT、Cookie、账号名或完整运行日志。
+
+---
+
+<a id="star-trail"></a>
+## ✦ 星轨 Star Trail
+
+<a href="https://star-history.com/#L0NE-6/Codar-Daily&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=L0NE-6/Codar-Daily&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=L0NE-6/Codar-Daily&type=Date" />
+    <img alt="Codar Daily Star Trail" src="https://api.star-history.com/svg?repos=L0NE-6/Codar-Daily&type=Date" />
+  </picture>
+</a>
+
+---
+
+<div align="center">
+  <sub>L0NE-6 · CODAR DAILY &nbsp;|&nbsp; 点个 <b>Star</b>，让下一轮签到有迹可循 ✨</sub>
+</div>
